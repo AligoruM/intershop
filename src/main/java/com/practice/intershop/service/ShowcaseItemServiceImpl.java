@@ -22,6 +22,7 @@ public class ShowcaseItemServiceImpl implements ShowcaseService {
         showcaseItem.setName("Showcase Item");
         showcaseItem.setDescription("Showcase Item");
         showcaseItem.setPrice(new BigDecimal("1000"));
+        showcaseItem.setImagePath("showcaseImages/default.jpg");
         return List.of(showcaseItem);
     }
 }
