@@ -1,87 +1,154 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <title>Витрина товаров</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .top-bar {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .top-bar a {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        .form-panel {
+            margin: 0 auto 30px auto;
+            width: 70%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .item-grid {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 20px;
+        }
+
+        .item-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .item-card img {
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        .item-card b {
+            display: block;
+            margin: 5px 0;
+        }
+
+        .item-card form {
+            margin-top: 10px;
+        }
+
+        button {
+            margin: 0 2px;
+            padding: 5px 10px;
+            border: none;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        select, input[type="text"] {
+            padding: 5px;
+            width: 200px;
+        }
+    </style>
 </head>
 
 <body>
-    <a href="/orders" style="float:right;">
-        <b>ЗАКАЗЫ &cudarrr;</b>
-    </a>
-    <a href="/cart/items" style="float:right;">
-        <b>КОРЗИНА &cudarrr;</b>
-    </a>
-    <table style="width:70%;margin-left:auto;margin-right:auto;">
-        <tr>
-            <td>
-                <form>
-                    <p>
-                        <label for="search">Найти: </label>
-                        <input id="search" style="width:300px;" name="search" th:value="${search}">
-                        <button name="action">&#128269;</button>
-                    </p>
-                    <p>
-                        <label for="sort">Сортировка: </label>
-                        <select id="sort" name="sort" onchange="this.form.submit()">
-                            <option value="NO" th:selected="${sort=='NO'}">нет</option>
-                            <option value="ALPHA" th:selected="${sort=='ALPHA'}">по алфавиту</option>
-                            <option value="PRICE" th:selected="${sort=='PRICE'}">по цене</option>
-                        </select>
-                    </p>
-                    <p>
-                        <label for="pageSize">Число товаров: </label>
-                        <select id="pageSize" name="pageSize" onchange="this.form.submit()">
-                            <option value="5" th:selected="${items.getSize()==5}">5</option>
-                            <option value="10" th:selected="${items.getSize()==10}">10</option>
-                            <option value="20" th:selected="${items.getSize()==20}">20</option>
-                            <option value="50" th:selected="${items.getSize()==50}">50</option>
-                            <option value="100" th:selected="${items.getSize()==100}">100</option>
-                        </select>
-                    </p>
-                    <p>
-                        <button th:if="${items.hasPrevious()}" name="pageNumber" th:value="${items.getNumber()-1}">&lt;</button>
-                        <span th:text="${'Страница: '+items.getNumber()}"></span>
-                        <button th:if="${items.hasNext()}" name="pageNumber" th:value="${items.getNumber()+1}">&gt;</button>
-                    </p>
-                </form>
-            </td>
-        </tr>
-        <tr th:each="itemsRow : ${items}">
-            <td th:each="item : ${itemsRow}">
-                <table>
-                    <tr>
-                        <td>
-                            <a th:href="${'/items/'+item.getId()}">
-                                <img width="300" height="300" th:src="${'http://localhost:8080/'+item.getImagePath()}">
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b th:text="${item.getName()}"></b>
-                        </td>
-                        <td>
-                            <b th:text="${item.getPrice()}+' руб.'"></b>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td th:text="${item.getDescription()}"></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <form th:action="${'/main/items/'+item.getId()}" method="post">
-                                <button name="action" value="minus">-</button>
-                                <span th:text="${item.getCount()}"></span>
-                                <button name="action" value="plus">+</button>
-                                <button name="action" value="plus" th:if="${item.getCount()==0}" style="float:right;">В корзину</button>
-                            </form>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
+<div class="top-bar">
+    <a href="/orders">ЗАКАЗЫ &cudarrr;</a>
+    <a href="/cart/items">КОРЗИНА &cudarrr;</a>
+</div>
 
+<div class="form-panel">
+    <form>
+        <p>
+            <label for="search">Найти: </label>
+            <input id="search" name="search" th:value="${search}">
+            <button name="action">&#128269;</button>
+        </p>
+        <p>
+            <label for="sort">Сортировка: </label>
+            <select id="sort" name="sort" onchange="this.form.submit()">
+                <option value="NO" th:selected="${sort=='NO'}">нет</option>
+                <option value="ALPHA" th:selected="${sort=='ALPHA'}">по алфавиту</option>
+                <option value="PRICE" th:selected="${sort=='PRICE'}">по цене</option>
+            </select>
+        </p>
+        <p>
+            <label for="pageSize">Число товаров: </label>
+            <select id="pageSize" name="pageSize" onchange="this.form.submit()">
+                <option value="5" th:selected="${items.getSize()==5}">5</option>
+                <option value="10" th:selected="${items.getSize()==10}">10</option>
+                <option value="20" th:selected="${items.getSize()==20}">20</option>
+                <option value="50" th:selected="${items.getSize()==50}">50</option>
+                <option value="100" th:selected="${items.getSize()==100}">100</option>
+            </select>
+        </p>
+        <p>
+            <button th:if="${items.hasPrevious()}" name="pageNumber" th:value="${items.getNumber()-1}">&lt;</button>
+            <span th:text="${'Страница: '+(items.getNumber() + 1)}"></span>
+            <button th:if="${items.hasNext()}" name="pageNumber" th:value="${items.getNumber()+1}">&gt;</button>
+        </p>
+    </form>
+</div>
+
+<!-- Витрина товаров -->
+<table class="item-grid">
+    <th:block th:each="item, stat : ${items.content}">
+        <th:block th:if="${stat.index % 5 == 0}">
+            <tr>
+        </th:block>
+
+        <td class="item-card">
+            <a th:href="@{'/items/' + ${item.id}}">
+                <img width="200" height="200" th:src="@{${item.imageUrl}}" alt="Изображение товара"/>
+            </a>
+            <b th:text="${item.name}"></b>
+            <b th:text="${item.price} + ' руб.'"></b>
+            <p th:text="${item.description}"></p>
+
+            <form th:action="@{'/main/items/' + ${item.id}}" method="post">
+                <button name="action" value="minus">-</button>
+                <span th:text="${item.count}"></span>
+                <button name="action" value="plus">+</button>
+                <button name="action" value="plus" th:if="${item.count == 0}" style="float:right;">В корзину</button>
+            </form>
+        </td>
+
+        <th:block th:if="${stat.index % 5 == 4 or stat.last}">
+            </tr>
+        </th:block>
+    </th:block>
+</table>
+</body>
 </html>

@@ -1,13 +1,13 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="gento (generated)" id="1751647845271-1">
+    <changeSet author="gento (generated)" id="1751695750369-1">
         <createTable tableName="Cart">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="CartPK"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="gento (generated)" id="1751647845271-2">
+    <changeSet author="gento (generated)" id="1751695750369-2">
         <createTable tableName="Order">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="OrderPK"/>
@@ -15,7 +15,7 @@
             <column name="createdAt" type="TIMESTAMP(6) WITH TIME ZONE"/>
         </createTable>
     </changeSet>
-    <changeSet author="gento (generated)" id="1751647845271-3">
+    <changeSet author="gento (generated)" id="1751695750369-3">
         <createTable tableName="OrderItem">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="OrderItemPK"/>
@@ -24,10 +24,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="unitPrice" type="numeric(38, 2)"/>
-            <column name="department_id" type="BIGINT"/>
+            <column name="order_id" type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet author="gento (generated)" id="1751647845271-4">
+    <changeSet author="gento (generated)" id="1751695750369-4">
         <createTable tableName="ShowcaseItem">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ShowcaseItemPK"/>
@@ -38,7 +38,7 @@
             <column name="price" type="numeric(38, 2)"/>
         </createTable>
     </changeSet>
-    <changeSet author="gento (generated)" id="1751647845271-5">
-        <addForeignKeyConstraint baseColumnNames="department_id" baseTableName="OrderItem" constraintName="FKi38s5khw47j0ydeqcb0xagi4o" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="Order" validate="true"/>
+    <changeSet author="gento (generated)" id="1751695750369-5">
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="OrderItem" constraintName="FK1d77ns82kvwa2hwab9k7xcaog" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="Order" validate="true"/>
     </changeSet>
 </databaseChangeLog>

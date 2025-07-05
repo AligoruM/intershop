@@ -128,8 +128,12 @@
 					<changeLogFile>${project.basedir}/src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
 					<outputChangeLogFile>dbchangelog.xml</outputChangeLogFile>
 					<diffChangeLogFile>${project.basedir}/src/main/resources/db/changelog/generated_changelog.xml</diffChangeLogFile>
-					<propertyFile>src/main/resources/liquibase.properties</propertyFile>
 					<logging>debug</logging>
+					<referenceUrl>hibernate:spring:com.practice.intershop.model?dialect=org.hibernate.dialect.H2Dialect</referenceUrl>
+					<url>jdbc:h2:file:./data/shopDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</url>
+					<username>user</username>
+					<password>user</password>
+					<driver>org.h2.Driver</driver>
 				</configuration>
 			</plugin>
 		</plugins>
