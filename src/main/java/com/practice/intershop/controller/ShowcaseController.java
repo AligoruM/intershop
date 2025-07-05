@@ -1,7 +1,7 @@
 package com.practice.intershop.controller;
 
 import com.practice.intershop.dto.ShowcaseItemDto;
-import com.practice.intershop.dto.SortOption;
+import com.practice.intershop.enums.SortOption;
 import com.practice.intershop.mapper.ShowcaseItemMapper;
 import com.practice.intershop.model.ShowcaseItem;
 import com.practice.intershop.service.ShowcaseService;
@@ -36,20 +36,23 @@ public class ShowcaseController {
 
         Page<ShowcaseItemDto> showcaseItemPage = showcaseService
                 .findShowcaseItems(pageable, search.orElse(""))
-                .map(showcaseItemMapper::toShowcaseItemDto);
+                .map(showcaseItemMapper::toDto);
 
+        //no idea how to handle these addAttribute, they look bad for me.
+        //Possible @ModelAttribute method need here if more such code will be added
         search.ifPresent(searchValue -> model.addAttribute("search", searchValue));
         model.addAttribute("sort", sort.toString());
         model.addAttribute("pageNumber", pageNumber);
         model.addAttribute("pageSize", pageSize);
+
         model.addAttribute("items", showcaseItemPage);
         return "main";
     }
 
-    @GetMapping("/items/{id}")
+    @GetMapping({"/items/{id}", "/main/items/{id}"})
     public String showcaseItem(@PathVariable Long id, Model model) {
-        ShowcaseItem showcaseItem = showcaseService.findShowcaseItem(id);
-        model.addAttribute("item", showcaseItemMapper.toShowcaseItemDto(showcaseItem));
+        ShowcaseItem showcaseItem = showcaseService.getShowcaseItem(id);
+        model.addAttribute("item", showcaseItemMapper.toDto(showcaseItem));
         return "item";
     }
 

@@ -20,7 +20,7 @@ public class ShowcaseItemServiceImpl implements ShowcaseService {
     }
 
     @Override
-    public ShowcaseItem findShowcaseItem(Long id) {
+    public ShowcaseItem getShowcaseItem(Long id) {
         return showcaseItemRepository.getReferenceById(id);
     }
 }

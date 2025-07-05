@@ -1,143 +1,145 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet id="insert-20-showcase-items" author="gento" context="dev">
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="1"/>
             <column name="name" value="Wireless Mouse"/>
             <column name="description" value="Ergonomic 2.4GHz mouse"/>
-            <column name="imagePath" value="/showcaseImages/default.jpg"/>
+            <column name="image_path" value="/showcaseImages/default.jpg"/>
             <column name="price" valueNumeric="29.99"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="2"/>
             <column name="name" value="Mechanical Keyboard"/>
             <column name="description" value="RGB backlit mechanical keyboard"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="79.90"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="3"/>
             <column name="name" value="Webcam 1080p"/>
             <column name="description" value="Full HD webcam with microphone"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="49.99"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="4"/>
             <column name="name" value="USB-C Hub"/>
             <column name="description" value="5-in-1 USB-C hub"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="39.50"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="5"/>
             <column name="name" value="Bluetooth Speaker"/>
             <column name="description" value="Portable waterproof speaker"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="59.00"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="6"/>
             <column name="name" value="Notebook A5"/>
             <column name="description" value="Hardcover, 200 pages"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="5.99"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="7"/>
             <column name="name" value="Office Chair"/>
             <column name="description" value="Ergonomic mesh chair"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="149.00"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="8"/>
             <column name="name" value="Gaming Monitor"/>
             <column name="description" value="27-inch 144Hz 2K monitor"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="299.99"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="9"/>
             <column name="name" value="Smart LED Lamp"/>
             <column name="description" value="App-controlled RGB lamp"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="35.75"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="10"/>
             <column name="name" value="Standing Desk"/>
             <column name="description" value="Adjustable height desk"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="399.00"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="11"/>
             <column name="name" value="Noise Cancelling Headphones"/>
             <column name="description" value="Over-ear Bluetooth headphones"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="129.99"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="12"/>
             <column name="name" value="Wireless Charger"/>
             <column name="description" value="Fast charging pad for smartphones"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="25.00"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="13"/>
             <column name="name" value="Fitness Band"/>
             <column name="description" value="Activity tracker with heart monitor"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="49.90"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="14"/>
             <column name="name" value="Drawing Tablet"/>
             <column name="description" value="Graphic tablet with pen"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="89.99"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="15"/>
             <column name="name" value="Laptop Stand"/>
             <column name="description" value="Aluminum adjustable stand"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="27.49"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="16"/>
             <column name="name" value="External SSD 1TB"/>
             <column name="description" value="USB 3.2 portable SSD"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="159.00"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="17"/>
             <column name="name" value="Smart Plug"/>
             <column name="description" value="Wi-Fi plug with app control"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="18.90"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="18"/>
             <column name="name" value="4K Action Camera"/>
             <column name="description" value="Waterproof with accessories"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="99.00"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="19"/>
             <column name="name" value="Bluetooth Tracker"/>
             <column name="description" value="Key &amp; bag finder device"/>
             <column name="price" valueNumeric="16.99"/>
         </insert>
-        <insert tableName="ShowcaseItem">
+        <insert tableName="showcase_item">
             <column name="id" valueNumeric="20"/>
             <column name="name" value="Thermal Mug"/>
             <column name="description" value="Stainless steel travel mug"/>
-            <column name="imagePath" value="/showcaseImages/placeholder.svg"/>
+            <column name="image_path" value="/showcaseImages/placeholder.svg"/>
             <column name="price" valueNumeric="22.00"/>
         </insert>
     </changeSet>

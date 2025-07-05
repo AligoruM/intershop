@@ -1,44 +1,56 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="gento (generated)" id="1751695750369-1">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="gento (generated)" id="1751715127418-1">
         <createTable tableName="Cart">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="CartPK"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="gento (generated)" id="1751695750369-2">
-        <createTable tableName="Order">
+    <changeSet author="gento (generated)" id="1751715127418-2">
+        <createTable tableName="order_item">
             <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="OrderPK"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="order_itemPK"/>
             </column>
-            <column name="createdAt" type="TIMESTAMP(6) WITH TIME ZONE"/>
+            <column name="quantity" type="INT"/>
+            <column name="status" type="TINYINT"/>
+            <column name="unit_price" type="numeric(38, 2)"/>
+            <column name="sales_order_id" type="BIGINT"/>
+            <column name="showcase_item_id" type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet author="gento (generated)" id="1751695750369-3">
-        <createTable tableName="OrderItem">
+    <changeSet author="gento (generated)" id="1751715127418-3">
+        <createTable tableName="sales_order">
             <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="OrderItemPK"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sales_orderPK"/>
             </column>
-            <column name="quantity" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="unitPrice" type="numeric(38, 2)"/>
-            <column name="order_id" type="BIGINT"/>
+            <column name="created_at" type="TIMESTAMP(6) WITH TIME ZONE"/>
+            <column name="order_status" type="TINYINT"/>
         </createTable>
     </changeSet>
-    <changeSet author="gento (generated)" id="1751695750369-4">
-        <createTable tableName="ShowcaseItem">
+    <changeSet author="gento (generated)" id="1751715127418-4">
+        <createTable tableName="showcase_item">
             <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ShowcaseItemPK"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="showcase_itemPK"/>
             </column>
             <column name="description" type="VARCHAR(255)"/>
-            <column name="imagePath" type="VARCHAR(255)"/>
+            <column name="image_path" type="VARCHAR(255)"/>
             <column name="name" type="VARCHAR(255)"/>
             <column name="price" type="numeric(38, 2)"/>
         </createTable>
     </changeSet>
-    <changeSet author="gento (generated)" id="1751695750369-5">
-        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="OrderItem" constraintName="FK1d77ns82kvwa2hwab9k7xcaog" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="Order" validate="true"/>
+    <changeSet author="gento (generated)" id="1751715127418-5">
+        <addForeignKeyConstraint baseColumnNames="showcase_item_id" baseTableName="order_item"
+                                 constraintName="FK2m9j1r5tslyw6o1kxm0b7sool" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="showcase_item" validate="true"/>
+    </changeSet>
+    <changeSet author="gento (generated)" id="1751715127418-6">
+        <addForeignKeyConstraint baseColumnNames="sales_order_id" baseTableName="order_item"
+                                 constraintName="FKbxrm3app1yyhq2hsrq31r8r4t" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id" referencedTableName="sales_order"
+                                 validate="true"/>
     </changeSet>
 </databaseChangeLog>

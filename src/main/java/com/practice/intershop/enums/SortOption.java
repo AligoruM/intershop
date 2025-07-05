@@ -1,4 +1,4 @@
-package com.practice.intershop.dto;
+package com.practice.intershop.enums;
 
 public enum SortOption {
     NO,

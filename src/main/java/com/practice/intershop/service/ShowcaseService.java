@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 public interface ShowcaseService {
     Page<ShowcaseItem> findShowcaseItems(Pageable pageable, String search);
 
-    ShowcaseItem findShowcaseItem(Long id);
+    ShowcaseItem getShowcaseItem(Long id);
 }

@@ -9,7 +9,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ShowcaseItemMapper {
 
-    ShowcaseItemDto toShowcaseItemDto(ShowcaseItem showcaseItem);
+    ShowcaseItemDto toDto(ShowcaseItem showcaseItem);
 
-    List<ShowcaseItemDto> toShowcaseItemDtos(List<ShowcaseItem> showcaseItem);
+    List<ShowcaseItemDto> toDto(List<ShowcaseItem> showcaseItem);
+
 }
