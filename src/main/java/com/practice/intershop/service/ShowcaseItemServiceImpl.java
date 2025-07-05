@@ -18,4 +18,9 @@ public class ShowcaseItemServiceImpl implements ShowcaseService {
         return showcaseItemRepository
                 .findShowcaseItemByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search, pageable);
     }
+
+    @Override
+    public ShowcaseItem findShowcaseItem(Long id) {
+        return showcaseItemRepository.getReferenceById(id);
+    }
 }

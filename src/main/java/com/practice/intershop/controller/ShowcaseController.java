@@ -3,6 +3,7 @@ package com.practice.intershop.controller;
 import com.practice.intershop.dto.ShowcaseItemDto;
 import com.practice.intershop.dto.SortOption;
 import com.practice.intershop.mapper.ShowcaseItemMapper;
+import com.practice.intershop.model.ShowcaseItem;
 import com.practice.intershop.service.ShowcaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
@@ -42,6 +44,13 @@ public class ShowcaseController {
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("items", showcaseItemPage);
         return "main";
+    }
+
+    @GetMapping("/items/{id}")
+    public String showcaseItem(@PathVariable Long id, Model model) {
+        ShowcaseItem showcaseItem = showcaseService.findShowcaseItem(id);
+        model.addAttribute("item", showcaseItemMapper.toShowcaseItemDto(showcaseItem));
+        return "item";
     }
 
     private Pageable getPageable(int page, int size, SortOption sortOption) {
