@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Ошибка</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .top-bar {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .top-bar a {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        .error-container {
+            max-width: 600px;
+            margin: 100px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .error {
+            font-size: 72px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+<div class="top-bar">
+    <a href="/orders">ЗАКАЗЫ &cudarrr;</a>
+    <a href="/cart/items">КОРЗИНА &cudarrr;</a>
+    <a href="/main/items">ГЛАВНАЯ &cudarrr;</a>
+</div>
+
+<div class="error-container">
+    <div class="error">Ошибка</div>
+    <div class="error-message" th:text="${error} ?: 'Что-то пошло не так. Пожалуйста, попробуйте позже.'">
+        Что-то пошло не так. Пожалуйста, попробуйте позже.
+    </div>
+    <a class="back-link" href="/main/items">Вернуться на главную</a>
+</div>
+</body>
+
+</html>

@@ -103,12 +103,12 @@
 
     <form method="post" th:action="@{'/items/' + ${item.id}}">
         <div class="quantity-controls">
-            <button name="action" value="minus">−</button>
+            <button name="action" value="MINUS">−</button>
             <span th:text="${item.count}"></span>
-            <button name="action" value="plus">+</button>
+            <button name="action" value="PLUS">+</button>
         </div>
         <div style="margin-top: 10px;" th:if="${item.count == 0}">
-            <button name="action" value="plus">В корзину</button>
+            <button name="action" value="PLUS">В корзину</button>
         </div>
     </form>
 </div>

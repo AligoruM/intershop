@@ -1,64 +1,140 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <title>Корзина товаров</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .top-bar {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .top-bar a {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        table.cart-table {
+            width: 70%;
+            margin-left: auto;
+            margin-right: auto;
+            border-collapse: separate;
+            border-spacing: 20px;
+        }
+
+        .item-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+
+        .item-card img {
+            border-radius: 8px;
+            max-width: 200px;
+            max-height: 200px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .item-card b {
+            display: block;
+            margin: 5px 0;
+        }
+
+        .item-card form {
+            margin-top: 10px;
+        }
+
+        button {
+            margin: 0 2px;
+            padding: 5px 10px;
+            border: none;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        button.delete-btn {
+            background: transparent;
+            color: #e74c3c;
+            font-weight: bold;
+            float: right;
+            padding: 0 8px;
+            font-size: 18px;
+        }
+
+        button.delete-btn:hover {
+            background: transparent;
+            color: #c0392b;
+        }
+
+        .total-sum {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        .buy-button-container {
+            text-align: right;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
-<a href="/orders" style="float:right;">
-    <b>ЗАКАЗЫ &cudarrr;</b>
-</a>
-<a href="/main/items" style="float:right;">
-    <b>ГЛАВНАЯ &cudarrr;</b>
-</a>
-<table style="width:70%;margin-left:auto;margin-right:auto;">
-    <tr th:each="item : ${items}">
-        <td>
-            <table>
-                <tr>
-                    <td>
-                        <img alt="Изображение товара" height="200" th:src="@{${item.showcaseItem.imageUrl}}"
-                             width="200"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b th:text="${item.showcaseItem.name}"></b>
-                    </td>
-                    <td>
-                        <b th:text="${item.unitPrice}+' руб.'"></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td th:text="${item.showcaseItem.description}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        <form method="post" th:action="${'/cart/items/'+item.showcaseItem.id}">
-                            <button name="action" value="minus">-</button>
-                            <span th:text="${item.quantity}"></span>
-                            <button name="action" value="plus">+</button>
-                            <button name="action" value="delete" style="float:right;">&cross;</button>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td style="text-align:right">
-            <b th:text="'Итого: '+${total}+' руб.'"></b>
-        </td>
-    </tr>
-    <tr>
-        <td style="text-align:right">
-            <form action="/cart/buy" method="post" th:if="${!empty}">
-                <button>Купить</button>
+
+<div class="top-bar">
+    <a href="/orders">ЗАКАЗЫ &cudarrr;</a>
+    <a href="/main/items">ГЛАВНАЯ &cudarrr;</a>
+</div>
+
+<table class="cart-table" th:if="${!cart.orderItems.isEmpty()}">
+    <tr th:each="item : ${cart.orderItems}">
+        <td class="item-card">
+            <img alt="Изображение товара" th:src="@{${item.showcaseItem.imageUrl}}"/>
+            <b th:text="${item.showcaseItem.name}"></b>
+            <b th:text="${item.unitPrice} + ' руб.'"></b>
+            <p th:text="${item.showcaseItem.description}"></p>
+
+            <form method="post" th:action="@{'/cart/items/' + ${item.showcaseItem.id}}">
+                <button name="action" value="MINUS">-</button>
+                <span th:text="${item.quantity}"></span>
+                <button name="action" value="PLUS">+</button>
+                <button class="delete-btn" name="action" type="submit" value="DELETE">&times;</button>
             </form>
         </td>
     </tr>
 </table>
-</body>
 
+<div class="total-sum" th:if="${!cart.orderItems.isEmpty()}" th:text="'Итого: ' + ${cart.totalSum} + ' руб.'"></div>
+
+<div class="buy-button-container" th:if="${!cart.orderItems.isEmpty()}">
+    <form method="post" th:action="@{'/cart/buy/' + ${cart.id}}">
+        <button>Купить</button>
+    </form>
+</div>
+
+<div style="text-align:center; font-weight:bold; margin-top:40px;" th:if="${cart.orderItems.isEmpty()}">
+    Корзина пуста
+</div>
+
+</body>
 </html>

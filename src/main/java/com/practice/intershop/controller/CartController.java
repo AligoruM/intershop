@@ -1,6 +1,6 @@
 package com.practice.intershop.controller;
 
-import com.practice.intershop.dto.OrderItemDto;
+import com.practice.intershop.dto.SalesOrderDto;
 import com.practice.intershop.enums.UpdateCountAction;
 import com.practice.intershop.mapper.SalesOrderMapper;
 import com.practice.intershop.model.SalesOrder;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,28 +29,21 @@ public class CartController {
         Optional<SalesOrder> plannedSalesOrder = orderService.findPlannedSalesOrder();
         plannedSalesOrder.map(salesOrderMapper::toDto)
                 .ifPresentOrElse(order -> {
-                            List<OrderItemDto> orderItemDtos = order.getOrderItems();
-                            model.addAttribute("empty", orderItemDtos.isEmpty());
-                            model.addAttribute("items", orderItemDtos);
-                            model.addAttribute("total", order.getTotalSum());
+                            model.addAttribute("cart", order);
                         },
                         () -> {
-                            model.addAttribute("empty", true);
-                            model.addAttribute("total", BigDecimal.ZERO);
+                            SalesOrderDto salesOrderDto = new SalesOrderDto();
+                            salesOrderDto.setOrderItems(List.of());
+                            model.addAttribute("cart", salesOrderDto);
                         });
         return "cart";
     }
 
-    @PostMapping("/cart/buy")
-    public String buy(Model model) {
-        Optional<SalesOrder> plannedSalesOrder = orderService.findPlannedSalesOrder();
-        if (plannedSalesOrder.isPresent()) {
-            orderService.performBuyOrder(plannedSalesOrder.get());
-        } else {
-            throw new RuntimeException("Order not found");
-        }
-        model.addAttribute("newOrder", true);
-        return "redirect:/orders/" + plannedSalesOrder.get().getId();
+    @PostMapping("/cart/buy/{orderId}")
+    public String buy(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+        orderService.performBuyOrder(orderId);
+        redirectAttributes.addFlashAttribute("newOrder", true);
+        return "redirect:/orders/" + orderId;
     }
 
     @PostMapping("/cart/items/{showcaseItemId}")

@@ -3,11 +3,13 @@ package com.practice.intershop.service;
 import com.practice.intershop.enums.OrderItemStatus;
 import com.practice.intershop.enums.OrderStatus;
 import com.practice.intershop.enums.UpdateCountAction;
+import com.practice.intershop.exception.IntershopCustomException;
 import com.practice.intershop.model.OrderItem;
 import com.practice.intershop.model.SalesOrder;
 import com.practice.intershop.model.ShowcaseItem;
 import com.practice.intershop.repository.OrderRepository;
 import com.practice.intershop.repository.ShowcaseItemRepository;
+import com.practice.intershop.service.validation.OrderValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +24,12 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final ShowcaseItemRepository showcaseItemRepository;
+    private final OrderValidationService validationService;
 
     @Override
     @Transactional
     public void updateCountForPlannedOrder(Long showcaseItemId, UpdateCountAction action) {
-        SalesOrder plannedSalesOrder = orderRepository.findFirstByOrderStatus(OrderStatus.PLANNED)
+        SalesOrder plannedSalesOrder = findPlannedSalesOrder()
                 .orElseGet(() -> {
                     SalesOrder salesOrder = new SalesOrder();
                     salesOrder.setOrderStatus(OrderStatus.PLANNED);
@@ -49,10 +52,10 @@ public class OrderServiceImpl implements OrderService {
                 });
 
         switch (action) {
-            case minus -> {
+            case MINUS -> {
                 int quantity = orderItem.getQuantity();
                 if (quantity <= 0) {
-                    throw new RuntimeException("Quantity must be greater than zero");
+                    throw new IntershopCustomException("Quantity must be greater than zero");
                 }
                 if (quantity == 1) {
                     plannedSalesOrder.getOrderItems().remove(orderItem);
@@ -60,8 +63,8 @@ public class OrderServiceImpl implements OrderService {
                     orderItem.setQuantity(quantity - 1);
                 }
             }
-            case delete -> plannedSalesOrder.getOrderItems().remove(orderItem);
-            case plus -> orderItem.setQuantity(orderItem.getQuantity() + 1);
+            case DELETE -> plannedSalesOrder.getOrderItems().remove(orderItem);
+            case PLUS -> orderItem.setQuantity(orderItem.getQuantity() + 1);
         }
         orderRepository.save(plannedSalesOrder);
     }
@@ -73,15 +76,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void performBuyOrder(SalesOrder salesOrder) {
+    public void performBuyOrder(Long orderId) {
+        SalesOrder salesOrder = findSalesOrder(orderId);
+
+        validationService.isValid(salesOrder);
+
         salesOrder.setOrderStatus(OrderStatus.COMPLETED);
         salesOrder.getOrderItems().forEach(orderItem -> orderItem.setStatus(OrderItemStatus.COMPLETED));
         orderRepository.save(salesOrder);
     }
 
     @Override
-    public Optional<SalesOrder> findSalesOrder(Long orderId) {
-        return orderRepository.findById(orderId);
+    public SalesOrder findSalesOrder(Long orderId) {
+        Optional<SalesOrder> salesOrder = orderRepository.findById(orderId);
+        return salesOrder.orElseThrow(() -> new IntershopCustomException("Order not found"));
     }
 
     @Override

@@ -11,9 +11,9 @@ public interface OrderService {
 
     Optional<SalesOrder> findPlannedSalesOrder();
 
-    void performBuyOrder(SalesOrder salesOrder);
+    void performBuyOrder(Long orderId);
 
-    Optional<SalesOrder> findSalesOrder(Long orderId);
+    SalesOrder findSalesOrder(Long orderId);
 
     List<SalesOrder> findAllCompletedOrders();
 }

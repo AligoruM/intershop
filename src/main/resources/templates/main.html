@@ -138,10 +138,10 @@
             <p th:text="${item.description}"></p>
 
             <form th:action="@{'/main/items/' + ${item.id}}" method="post">
-                <button name="action" value="minus">-</button>
+                <button name="action" value="MINUS">-</button>
                 <span th:text="${item.count}"></span>
-                <button name="action" value="plus">+</button>
-                <button name="action" value="plus" th:if="${item.count == 0}" style="float:right;">В корзину</button>
+                <button name="action" value="PLUS">+</button>
+                <button name="action" style="float:right;" th:if="${item.count == 0}" value="PLUS">В корзину</button>
             </form>
         </td>
 

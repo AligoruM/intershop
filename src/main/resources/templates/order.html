@@ -1,58 +1,106 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <title>Заказ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .top-bar {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .top-bar a {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        table.order-table {
+            width: 70%;
+            margin-left: auto;
+            margin-right: auto;
+            border-collapse: separate;
+            border-spacing: 20px;
+        }
+
+        .item-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            text-align: center;
+        }
+
+        .item-card img {
+            border-radius: 8px;
+            max-width: 200px;
+            max-height: 200px;
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-weight: bold;
+        }
+
+        .item-details > div {
+            min-width: 80px;
+        }
+
+        .new-order-message {
+            color: #27ae60;
+            font-size: 1.4em;
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
 
 <body>
-<a href="/orders" style="float:right;">
-    <b>ЗАКАЗЫ &cudarrr;</b>
-</a>
-<a href="/cart/items" style="float:right;">
-    <b>КОРЗИНА &cudarrr;</b>
-</a>
-<a href="/main/items" style="float:right;">
-    <b>ГЛАВНАЯ &cudarrr;</b>
-</a>
-<h1 style="text-align:center" th:if="${newOrder}">Поздравляем! Успешная покупка! &#128578;</h1>
-<table style="width:70%;margin-left:auto;margin-right:auto;">
-    <tr>
-        <td>
-            <h2 th:text="${'Заказ №'+salesOrder.id}"></h2>
-        </td>
-    </tr>
+
+<div class="top-bar">
+    <a href="/orders">ЗАКАЗЫ &cudarrr;</a>
+    <a href="/cart/items">КОРЗИНА &cudarrr;</a>
+    <a href="/main/items">ГЛАВНАЯ &cudarrr;</a>
+</div>
+
+<h1 class="new-order-message" th:if="${newOrder}">Поздравляем! Успешная покупка! &#128578;</h1>
+
+<h2 th:text="'Заказ № ' + ${salesOrder.id}"></h2>
+
+<table class="order-table">
     <tr th:each="item : ${salesOrder.orderItems}">
-        <td>
-            <table>
-                <tr>
-                    <td>
-                        <a th:href="${'/items/'+item.id}">
-                            <img alt="Изображение товара" height="200" th:src="@{${item.showcaseItem.imageUrl}}"
-                                 width="200"/>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b th:text="${item.showcaseItem.name}"></b>
-                    </td>
-                    <td>
-                        <b th:text="${item.quantity}+' шт.'"></b>
-                    </td>
-                    <td>
-                        <b th:text="${item.unitPrice*item.quantity}+' руб.'"></b>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <h3 th:text="${'Сумма: '+salesOrder.totalSum}+' руб.'"></h3>
+        <td class="item-card">
+            <a th:href="@{'/items/' + ${item.id}}">
+                <img alt="Изображение товара" th:src="@{${item.showcaseItem.imageUrl}}"/>
+            </a>
+            <div class="item-details">
+                <div th:text="${item.showcaseItem.name}"></div>
+                <div th:text="${item.quantity} + ' шт.'"></div>
+                <div th:text="${item.unitPrice * item.quantity} + ' руб.'"></div>
+            </div>
         </td>
     </tr>
 </table>
-</body>
 
+<h3 th:text="'Сумма: ' + ${salesOrder.totalSum} + ' руб.'"></h3>
+
+</body>
 </html>

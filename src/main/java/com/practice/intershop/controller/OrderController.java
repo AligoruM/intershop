@@ -26,11 +26,7 @@ public class OrderController {
 
     @GetMapping("/orders/{id}")
     public String order(@PathVariable Long id, Model model) {
-        orderService.findSalesOrder(id)
-                .map(salesOrderMapper::toDto)
-                .ifPresentOrElse(order -> model.addAttribute("salesOrder", order), () -> {
-                    throw new RuntimeException("Order not found");
-                });
+        model.addAttribute("salesOrder", salesOrderMapper.toDto(orderService.findSalesOrder(id)));
         return "order";
     }
 
