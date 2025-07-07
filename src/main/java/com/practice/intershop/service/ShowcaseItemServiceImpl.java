@@ -1,6 +1,6 @@
 package com.practice.intershop.service;
 
-import com.practice.intershop.exception.IntershopCustomException;
+import com.practice.intershop.exception.NotFoundException;
 import com.practice.intershop.model.ShowcaseItem;
 import com.practice.intershop.repository.ShowcaseItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,6 @@ public class ShowcaseItemServiceImpl implements ShowcaseService {
 
     @Override
     public ShowcaseItem getShowcaseItem(Long id) {
-        return showcaseItemRepository.findById(id).orElseThrow(() -> new IntershopCustomException("Showcase item not found"));
+        return showcaseItemRepository.findById(id).orElseThrow(() -> new NotFoundException("Showcase item not found"));
     }
 }

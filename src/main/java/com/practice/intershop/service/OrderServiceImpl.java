@@ -4,6 +4,7 @@ import com.practice.intershop.enums.OrderItemStatus;
 import com.practice.intershop.enums.OrderStatus;
 import com.practice.intershop.enums.UpdateCountAction;
 import com.practice.intershop.exception.IntershopCustomException;
+import com.practice.intershop.exception.NotFoundException;
 import com.practice.intershop.model.OrderItem;
 import com.practice.intershop.model.SalesOrder;
 import com.practice.intershop.model.ShowcaseItem;
@@ -89,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public SalesOrder findSalesOrder(Long orderId) {
         Optional<SalesOrder> salesOrder = orderRepository.findById(orderId);
-        return salesOrder.orElseThrow(() -> new IntershopCustomException("Order not found"));
+        return salesOrder.orElseThrow(() -> new NotFoundException("Order not found"));
     }
 
     @Override
