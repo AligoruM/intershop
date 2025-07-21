@@ -1,33 +1,35 @@
 package com.practice.intershop.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Formula;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 
-@Entity
 @Data
 @Table(name = "showcase_item")
 public class ShowcaseItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column("name")
     private String name;
 
-    @Column(name = "description")
+    @Column("description")
     private String description;
 
-    @Column(name = "image_path")
+    @Column("image_path")
     private String imagePath;
 
-    @Column(name = "price")
+    @Column("price")
     private BigDecimal price;
 
-    @Formula("(SELECT COALESCE(oi.quantity, 0) FROM order_item oi WHERE oi.showcase_item_id = id and oi.status = 0)")
+    //@Formula("(SELECT COALESCE(oi.quantity, 0) FROM order_item oi WHERE oi.showcase_item_id = id and oi.status = 0)")
+    @Transient
     private Integer count;
 
 }

@@ -17,14 +17,14 @@ import java.util.List;
 public abstract class AbstractControllerTest {
 
     protected <T> Page<T> getPageFromModel(MvcResult result, String attributeName) {
-        return (Page<T>) result.getModelAndView().getModel().get(attributeName);
+        return null;
     }
 
     protected <T> List<T> getListFromModel(MvcResult result, String attributeName) {
-        return (List<T>) result.getModelAndView().getModel().get(attributeName);
+        return null;
     }
 
     protected <T> T getObjectFromModel(MvcResult result, String attributeName) {
-        return (T) result.getModelAndView().getModel().get(attributeName);
+        return null;
     }
 }

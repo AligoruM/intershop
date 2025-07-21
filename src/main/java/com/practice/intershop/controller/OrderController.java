@@ -1,6 +1,6 @@
 package com.practice.intershop.controller;
 
-import com.practice.intershop.dto.SalesOrderDto;
+/*import com.practice.intershop.dto.SalesOrderDto;
 import com.practice.intershop.enums.UpdateCountAction;
 import com.practice.intershop.mapper.SalesOrderMapper;
 import com.practice.intershop.model.SalesOrder;
@@ -70,4 +70,4 @@ public class OrderController {
         orderService.updateCountForPlannedOrder(showcaseItemId, action);
         return "redirect:/cart/items";
     }
-}
+}*/

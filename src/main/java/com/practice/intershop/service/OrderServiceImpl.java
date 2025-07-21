@@ -1,25 +1,6 @@
 package com.practice.intershop.service;
 
-import com.practice.intershop.enums.OrderItemStatus;
-import com.practice.intershop.enums.OrderStatus;
-import com.practice.intershop.enums.UpdateCountAction;
-import com.practice.intershop.exception.IntershopCustomException;
-import com.practice.intershop.exception.NotFoundException;
-import com.practice.intershop.model.OrderItem;
-import com.practice.intershop.model.SalesOrder;
-import com.practice.intershop.model.ShowcaseItem;
-import com.practice.intershop.repository.OrderRepository;
-import com.practice.intershop.repository.ShowcaseItemRepository;
-import com.practice.intershop.service.validation.OrderValidationService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-@Service
+/*@Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
@@ -98,4 +79,4 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByOrderStatus(OrderStatus.COMPLETED);
     }
 
-}
+}*/

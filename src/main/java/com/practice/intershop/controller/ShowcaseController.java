@@ -1,20 +1,18 @@
 package com.practice.intershop.controller;
 
-import com.practice.intershop.dto.ShowcaseItemDto;
 import com.practice.intershop.enums.SortOption;
 import com.practice.intershop.mapper.ShowcaseItemMapper;
-import com.practice.intershop.model.ShowcaseItem;
 import com.practice.intershop.service.ShowcaseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.reactive.result.view.Rendering;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -26,34 +24,29 @@ public class ShowcaseController {
     private final ShowcaseItemMapper showcaseItemMapper;
 
     @GetMapping("/main/items")
-    public String mainItems(@RequestParam(value = "search") Optional<String> search,
-                            @RequestParam(value = "sort", defaultValue = "NO") SortOption sort,
-                            @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
-                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                            Model model) {
+    public Mono<Rendering> mainItems(@RequestParam(value = "search") Optional<String> search,
+                                     @RequestParam(value = "sort", defaultValue = "NO") SortOption sort,
+                                     @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+                                     @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) {
 
         Pageable pageable = getPageable(pageNumber, pageSize, sort);
+        String searchValue = search.orElse("");
 
-        Page<ShowcaseItemDto> showcaseItemPage = showcaseService
-                .findShowcaseItems(pageable, search.orElse(""))
-                .map(showcaseItemMapper::toDto);
-
-        //no idea how to handle these addAttribute, they look bad for me.
-        //Possible @ModelAttribute method need here if more such code will be added
-        search.ifPresent(searchValue -> model.addAttribute("search", searchValue));
-        model.addAttribute("sort", sort.toString());
-        model.addAttribute("pageNumber", pageNumber);
-        model.addAttribute("pageSize", pageSize);
-
-        model.addAttribute("items", showcaseItemPage);
-        return "main";
+        return showcaseService.findShowcaseItems(pageable, searchValue)
+                .map(page -> Rendering.view("main")
+                        .modelAttribute("items", page.map(showcaseItemMapper::toDto))
+                        .modelAttribute("search", searchValue)
+                        .modelAttribute("sort", sort.toString())
+                        .modelAttribute("pageNumber", pageNumber)
+                        .modelAttribute("pageSize", pageSize)
+                        .build());
     }
 
     @GetMapping({"/items/{id}", "/main/items/{id}"})
-    public String showcaseItem(@PathVariable Long id, Model model) {
-        ShowcaseItem showcaseItem = showcaseService.getShowcaseItem(id);
-        model.addAttribute("item", showcaseItemMapper.toDto(showcaseItem));
-        return "item";
+    public Mono<Rendering> showcaseItem(@PathVariable Long id) {
+        return showcaseService.getShowcaseItem(id)
+                .map(item -> Rendering.view("item")
+                        .modelAttribute("item", showcaseItemMapper.toDto(item)).build());
     }
 
     private Pageable getPageable(int page, int size, SortOption sortOption) {
