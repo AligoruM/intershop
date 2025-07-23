@@ -1,34 +1,39 @@
 package com.practice.intershop.model;
 
 import com.practice.intershop.enums.OrderItemStatus;
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 
-@Entity
 @Data
-@Table(name = "order_item")
+@Table("order_item")
 public class OrderItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "sales_order_id")
-    private SalesOrder salesOrder;
+    @Column("sales_order_id")
+    private Long salesOrderId;
 
-    @ManyToOne
-    @JoinColumn(name = "showcase_item_id")
-    private ShowcaseItem showcaseItem;
+    @Column("showcase_item_id")
+    private Long showcaseItemId;
 
-    @Column(name = "quantity")
+    @Column("quantity")
     private int quantity;
 
-    @Column(name = "unit_price")
+    @Column("unit_price")
     private BigDecimal unitPrice;
 
-    @Column(name = "status")
+    @Column("status")
     private OrderItemStatus status;
+
+    @Transient
+    private ShowcaseItem showcaseItem;
+
+    @Transient
+    private SalesOrder salesOrder;
 }

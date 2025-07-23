@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 public class ShowcaseItem {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column("name")
@@ -28,7 +27,6 @@ public class ShowcaseItem {
     @Column("price")
     private BigDecimal price;
 
-    //@Formula("(SELECT COALESCE(oi.quantity, 0) FROM order_item oi WHERE oi.showcase_item_id = id and oi.status = 0)")
     @Transient
     private Integer count;
 

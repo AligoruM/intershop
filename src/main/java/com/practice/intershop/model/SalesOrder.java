@@ -1,30 +1,28 @@
 package com.practice.intershop.model;
 
 import com.practice.intershop.enums.OrderStatus;
-import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
 import java.util.List;
 
-@Entity
 @Data
-@Table(name = "sales_order")
+@Table("sales_order")
 public class SalesOrder {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems;
-
-    @Column(name = "order_status")
+    @Column("order_status")
     private OrderStatus orderStatus;
 
-    @CreationTimestamp
-    @Column(name = "created_at")
+    @Column("created_at")
     private Instant createdAt;
 
+    @Transient
+    private List<OrderItem> orderItems;
 }

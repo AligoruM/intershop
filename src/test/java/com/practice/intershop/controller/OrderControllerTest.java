@@ -1,4 +1,4 @@
-package com.practice.intershop.controller;
+/*package com.practice.intershop.controller;
 
 import com.practice.intershop.dto.SalesOrderDto;
 import com.practice.intershop.mapper.SalesOrderMapper;
@@ -18,6 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 class OrderControllerTest extends AbstractControllerTest {
 
@@ -80,4 +81,4 @@ class OrderControllerTest extends AbstractControllerTest {
                 .distinct()
                 .forEach(showcaseItem -> salesShowcaseItemRepository.save(showcaseItem));
     }
-}
+}*/

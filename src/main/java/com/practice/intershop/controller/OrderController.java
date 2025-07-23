@@ -1,21 +1,19 @@
 package com.practice.intershop.controller;
 
-/*import com.practice.intershop.dto.SalesOrderDto;
+import com.practice.intershop.dto.SalesOrderDto;
 import com.practice.intershop.enums.UpdateCountAction;
 import com.practice.intershop.mapper.SalesOrderMapper;
-import com.practice.intershop.model.SalesOrder;
 import com.practice.intershop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.reactive.result.view.Rendering;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,49 +23,62 @@ public class OrderController {
     private final SalesOrderMapper salesOrderMapper;
 
     @GetMapping("/orders")
-    public String orders(Model model) {
-        model.addAttribute("orders", salesOrderMapper.toDto(orderService.findAllCompletedOrders()));
-        return "orders";
+    public Mono<Rendering> orders() {
+        return orderService.findAllCompletedOrders()
+                .map(salesOrderMapper::toDto)
+                .collectList()
+                .map(orders -> Rendering.view("orders")
+                        .modelAttribute("orders", orders)
+                        .build());
     }
 
     @GetMapping("/orders/{id}")
-    public String order(@PathVariable Long id, Model model) {
-        model.addAttribute("salesOrder", salesOrderMapper.toDto(orderService.findSalesOrder(id)));
-        return "order";
+    public Mono<Rendering> order(@PathVariable Long id) {
+        return orderService.findSalesOrder(id)
+                .map(salesOrderMapper::toDto)
+                .map(order -> Rendering.view("order")
+                        .modelAttribute("salesOrder", order)
+                        .build());
     }
 
     @PostMapping({"/main/items/{showcaseItemId}", "/items/{showcaseItemId}"})
-    public String changeItem(@PathVariable Long showcaseItemId,
-                             @RequestParam(value = "action") UpdateCountAction action) {
-        orderService.updateCountForPlannedOrder(showcaseItemId, action);
-        return "redirect:/main/items/" + showcaseItemId;
+    public Mono<Rendering> updateItem(@PathVariable Long showcaseItemId,
+                                      ServerWebExchange webExchange) {
+        return webExchange.getFormData().flatMap(formData -> {
+            String action = formData.getFirst("action");
+            UpdateCountAction enumAction = UpdateCountAction.valueOf(action);
+            return orderService.updateCountForPlannedOrder(showcaseItemId, enumAction)
+                    .thenReturn(Rendering.redirectTo("/main/items/" + showcaseItemId).build());
+        });
     }
 
     @GetMapping("/cart/items")
-    public String cartItems(Model model) {
-        Optional<SalesOrder> plannedSalesOrder = orderService.findPlannedSalesOrder();
-        plannedSalesOrder.map(salesOrderMapper::toDto)
-                .ifPresentOrElse(
-                        order -> model.addAttribute("cart", order),
-                        () -> {
-                            SalesOrderDto salesOrderDto = new SalesOrderDto();
-                            salesOrderDto.setOrderItems(List.of());
-                            model.addAttribute("cart", salesOrderDto);
-                        });
-        return "cart";
+    public Mono<Rendering> cartItems() {
+        return orderService.findPlannedSalesOrder()
+                .map(salesOrderMapper::toDto)
+                .defaultIfEmpty(new SalesOrderDto(-1L, List.of()))
+                .map(cart -> Rendering.view("cart")
+                        .modelAttribute("cart", cart)
+                        .build());
     }
 
     @PostMapping("/cart/buy/{orderId}")
-    public String buy(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
-        orderService.performBuyOrder(orderId);
-        redirectAttributes.addFlashAttribute("newOrder", true);
-        return "redirect:/orders/" + orderId;
+    public Mono<Rendering> buy(@PathVariable Long orderId) {
+        return orderService.performBuyOrder(orderId)
+                .thenReturn(Rendering.redirectTo("/orders/" + orderId)
+                        .modelAttribute("newOrder", true)
+                        .build());
     }
 
     @PostMapping("/cart/items/{showcaseItemId}")
-    public String updateCount(@PathVariable Long showcaseItemId,
-                              @RequestParam(value = "action") UpdateCountAction action) {
-        orderService.updateCountForPlannedOrder(showcaseItemId, action);
-        return "redirect:/cart/items";
+    public Mono<Rendering> updateCountFromCart(@PathVariable Long showcaseItemId,
+                                               ServerWebExchange webExchange) {
+        return webExchange.getFormData()
+                .flatMap(formData -> {
+                    String action = formData.getFirst("action");
+                    UpdateCountAction enumAction = UpdateCountAction.valueOf(action);
+                    return orderService.updateCountForPlannedOrder(showcaseItemId, enumAction)
+                            .thenReturn(Rendering.redirectTo("/cart/items").build());
+                });
     }
-}*/
+}
