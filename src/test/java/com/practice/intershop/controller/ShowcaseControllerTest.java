@@ -3,10 +3,8 @@ package com.practice.intershop.controller;
 import com.practice.intershop.dto.ShowcaseItemDto;
 import com.practice.intershop.mapper.ShowcaseItemMapper;
 import com.practice.intershop.model.ShowcaseItem;
-import com.practice.intershop.repository.ShowcaseItemR2dbcRepository;
 import com.practice.intershop.utils.HtmlTestUtils;
 import com.practice.intershop.utils.ShowcaseTestDataFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Flux;
@@ -20,13 +18,6 @@ class ShowcaseControllerTest extends AbstractControllerTest {
 
     @Autowired
     private ShowcaseItemMapper showcaseItemMapper;
-    @Autowired
-    private ShowcaseItemR2dbcRepository showcaseItemRepository;
-
-    @BeforeEach
-    void setup() {
-        showcaseItemRepository.deleteAll().block();
-    }
 
     @Test
     void testMainItems_DefaultRequest_shouldReturnPageWithUpTo5Elements() throws Exception {
