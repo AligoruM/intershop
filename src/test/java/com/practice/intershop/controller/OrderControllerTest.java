@@ -1,10 +1,12 @@
-/*package com.practice.intershop.controller;
+package com.practice.intershop.controller;
 
-import com.practice.intershop.dto.SalesOrderDto;
+/*import com.practice.intershop.dto.SalesOrderDto;
 import com.practice.intershop.mapper.SalesOrderMapper;
 import com.practice.intershop.model.OrderItem;
 import com.practice.intershop.model.SalesOrder;
+import com.practice.intershop.repository.OrderR2dbcRepository;
 import com.practice.intershop.repository.OrderRepository;
+import com.practice.intershop.repository.ShowcaseItemR2dbcRepository;
 import com.practice.intershop.repository.ShowcaseItemRepository;
 import com.practice.intershop.utils.OrderTestDataFactory;
 import org.junit.jupiter.api.Test;
@@ -23,13 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OrderControllerTest extends AbstractControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
     private SalesOrderMapper salesOrderMapper;
     @Autowired
-    private OrderRepository salesOrderRepository;
+    private OrderR2dbcRepository salesOrderRepository;
     @Autowired
-    private ShowcaseItemRepository salesShowcaseItemRepository;
+    private ShowcaseItemR2dbcRepository salesShowcaseItemRepository;
 
     @Test
     void testGetOrderById_shouldReturnOrderPage() throws Exception {

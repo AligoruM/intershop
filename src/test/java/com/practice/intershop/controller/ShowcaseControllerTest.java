@@ -1,166 +1,197 @@
-/*
 package com.practice.intershop.controller;
 
 import com.practice.intershop.dto.ShowcaseItemDto;
 import com.practice.intershop.mapper.ShowcaseItemMapper;
 import com.practice.intershop.model.ShowcaseItem;
-import com.practice.intershop.repository.ShowcaseItemRepository;
+import com.practice.intershop.repository.ShowcaseItemR2dbcRepository;
+import com.practice.intershop.utils.HtmlTestUtils;
 import com.practice.intershop.utils.ShowcaseTestDataFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import reactor.core.publisher.Flux;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class ShowcaseControllerTest extends AbstractControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
     private ShowcaseItemMapper showcaseItemMapper;
     @Autowired
-    private ShowcaseItemRepository showcaseItemRepository;
+    private ShowcaseItemR2dbcRepository showcaseItemRepository;
+
+    @BeforeEach
+    void setup() {
+        showcaseItemRepository.deleteAll().block();
+    }
 
     @Test
     void testMainItems_DefaultRequest_shouldReturnPageWithUpTo5Elements() throws Exception {
         ShowcaseItem item1 = ShowcaseTestDataFactory.createShowcaseItem1();
         ShowcaseItem item2 = ShowcaseTestDataFactory.createShowcaseItem2();
-        List<ShowcaseItem> savedItems = showcaseItemRepository.saveAll(List.of(item1, item2));
+
+        List<ShowcaseItem> savedItems = Flux.just(item1, item2)
+                .flatMap(showcaseItemRepository::save)
+                .collectList()
+                .block();
 
         List<ShowcaseItemDto> expectedDtos = savedItems.stream()
                 .map(showcaseItemMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
 
+        webTestClient.get().uri("/main/items")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(response -> {
+                    List<ShowcaseItemDto> actualItems = HtmlTestUtils.extractItemsFromHtml(response);
 
-        MvcResult mvcResult = mockMvc.perform(get("/main/items"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("main"))
-                .andExpect(model().attributeExists("items"))
-                .andExpect(model().attribute("sort", "NO"))
-                .andExpect(model().attribute("pageNumber", 0))
-                .andExpect(model().attribute("pageSize", 5))
-                .andReturn();
+                    assertThat(actualItems).hasSize(2);
 
-        Page<ShowcaseItemDto> items = getPageFromModel(mvcResult, "items");
-        assertThat(items).hasSize(2);
-        assertThat(items.getTotalElements()).isEqualTo(2);
-        assertThat(items.getTotalPages()).isEqualTo(1);
-        assertThat(items.hasNext()).isFalse();
-        assertThat(items.getContent()).containsOnlyOnceElementsOf(expectedDtos);
+                    for (ShowcaseItemDto expected : expectedDtos) {
+                        boolean matchFound = actualItems.stream().anyMatch(actual ->
+                                expected.getName().equals(actual.getName()) &&
+                                        expected.getPrice().compareTo(actual.getPrice()) == 0
+                        );
+                        assertThat(matchFound)
+                                .as("Товар с именем '%s' и ценой %.2f найден", expected.getName(), expected.getPrice())
+                                .isTrue();
+                    }
+                });
     }
 
     @Test
-    void testMainItems_1elementPerPagePriceSort_shouldReturnPageWith1ElementSorted() throws Exception {
-        ShowcaseItem item1 = ShowcaseTestDataFactory.createShowcaseItem1();
-        ShowcaseItem item2 = ShowcaseTestDataFactory.createShowcaseItem2();
-        List<ShowcaseItem> savedItems = showcaseItemRepository.saveAll(List.of(item1, item2));
-        ShowcaseItemDto expectedExpensiveDto = showcaseItemMapper.toDto(savedItems.get(0));
-        ShowcaseItemDto expectedLessExpensiveDto = showcaseItemMapper.toDto(savedItems.get(1));
+    void testMainItems_1elementPerPagePriceSort_shouldReturnPageWith1ElementSorted() {
+        ShowcaseItem item1 = ShowcaseTestDataFactory.createShowcaseItem1(); // дороже
+        ShowcaseItem item2 = ShowcaseTestDataFactory.createShowcaseItem2(); // дешевле
 
-        MvcResult mvcResult = mockMvc.perform(get("/main/items")
-                        .param("pageSize", "1")
-                        .param("sort", "PRICE"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("main"))
-                .andExpect(model().attributeExists("items"))
-                .andExpect(model().attribute("sort", "PRICE"))
-                .andExpect(model().attribute("pageNumber", 0))
-                .andExpect(model().attribute("pageSize", 1))
-                .andReturn();
+        List<ShowcaseItem> savedItems = Flux.just(item1, item2)
+                .flatMap(showcaseItemRepository::save)
+                .collectList()
+                .block();
 
-        Page<ShowcaseItemDto> items = getPageFromModel(mvcResult, "items");
-        assertThat(items).hasSize(1);
-        assertThat(items.getTotalElements()).isEqualTo(2);
-        assertThat(items.getTotalPages()).isEqualTo(2);
-        assertThat(items.hasNext()).isTrue();
-        assertThat(items.getContent()).containsOnlyOnce(expectedLessExpensiveDto);
+        List<ShowcaseItemDto> dtos = savedItems.stream()
+                .map(showcaseItemMapper::toDto)
+                .sorted(Comparator.comparing(ShowcaseItemDto::getPrice)) // сортировка по цене
+                .toList();
 
-        mvcResult = mockMvc.perform(get("/main/items")
-                        .param("pageSize", "1")
-                        .param("pageNumber", "1")
-                        .param("sort", "PRICE"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("main"))
-                .andExpect(model().attributeExists("items"))
-                .andExpect(model().attribute("sort", "PRICE"))
-                .andExpect(model().attribute("pageNumber", 1))
-                .andExpect(model().attribute("pageSize", 1))
-                .andReturn();
+        ShowcaseItemDto cheaper = dtos.get(0);
+        ShowcaseItemDto moreExpensive = dtos.get(1);
 
-        items = getPageFromModel(mvcResult, "items");
-        assertThat(items).hasSize(1);
-        assertThat(items.getTotalElements()).isEqualTo(2);
-        assertThat(items.getTotalPages()).isEqualTo(2);
-        assertThat(items.hasNext()).isFalse();
-        assertThat(items.getContent()).containsOnlyOnce(expectedExpensiveDto);
+        // Первая страница
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/main/items")
+                        .queryParam("pageSize", "1")
+                        .queryParam("sort", "PRICE")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(response -> {
+                    List<ShowcaseItemDto> items = HtmlTestUtils.extractItemsFromHtml(response);
+                    assertThat(items).hasSize(1);
+                    assertThat(items.get(0).getName()).isEqualTo(cheaper.getName());
+                    assertThat(items.get(0).getPrice()).isEqualByComparingTo(cheaper.getPrice());
+                });
+
+        // Вторая страница
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/main/items")
+                        .queryParam("pageSize", "1")
+                        .queryParam("pageNumber", "1")
+                        .queryParam("sort", "PRICE")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(response -> {
+                    List<ShowcaseItemDto> items = HtmlTestUtils.extractItemsFromHtml(response);
+                    assertThat(items).hasSize(1);
+                    assertThat(items.get(0).getName()).isEqualTo(moreExpensive.getName());
+                    assertThat(items.get(0).getPrice()).isEqualByComparingTo(moreExpensive.getPrice());
+                });
     }
 
     @Test
-    void testShowcaseItem_mainPath_shouldReturnItemPageWithCorrectItem() throws Exception {
+    void testShowcaseItem_mainPath_shouldReturnItemPageWithCorrectItem() {
         ShowcaseItem item = ShowcaseTestDataFactory.createShowcaseItem1();
-        ShowcaseItem savedItem = showcaseItemRepository.save(item);
-        ShowcaseItemDto expectedDto = showcaseItemMapper.toDto(savedItem);
+        ShowcaseItem savedItem = showcaseItemRepository.save(item).block();
+        ShowcaseItemDto expected = showcaseItemMapper.toDto(savedItem);
 
-        MvcResult result = mockMvc.perform(get("/main/items/" + savedItem.getId()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("item"))
-                .andExpect(model().attributeExists("item"))
-                .andReturn();
-
-        ShowcaseItemDto actualDto = getObjectFromModel(result, "item");
-        assertThat(actualDto).isEqualTo(expectedDto);
+        webTestClient.get().uri("/main/items/" + savedItem.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(response -> {
+                    ShowcaseItemDto actual = HtmlTestUtils.extractItemFromHtml(response);
+                    assertThat(actual.getName()).isEqualTo(expected.getName());
+                    assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
+                    assertThat(actual.getDescription()).isEqualTo(expected.getDescription());
+                });
     }
 
     @Test
-    void testMainItems_withSearchParameterFullName_shouldReturnFilteredResults() throws Exception {
+    void testMainItems_withSearchParameterFullName_shouldReturnFilteredResults() {
         ShowcaseItem item1 = ShowcaseTestDataFactory.createShowcaseItem1();
         ShowcaseItem item2 = ShowcaseTestDataFactory.createShowcaseItem2();
-        showcaseItemRepository.saveAll(List.of(item1, item2));
 
-        MvcResult result = mockMvc.perform(get("/main/items")
-                        .param("search", "test showcase item 1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("main"))
-                .andExpect(model().attributeExists("items"))
-                .andReturn();
+        Flux.just(item1, item2)
+                .flatMap(showcaseItemRepository::save)
+                .then()
+                .block();
 
-        Page<ShowcaseItemDto> items = getPageFromModel(result, "items");
-        assertThat(items).hasSize(1);
-        assertThat(items.getContent().getFirst().getName()).containsIgnoringCase("test showcase item 1");
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/main/items")
+                        .queryParam("search", "test showcase item 1")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(response -> {
+                    List<ShowcaseItemDto> items = HtmlTestUtils.extractItemsFromHtml(response);
+                    assertThat(items).hasSize(1);
+                    assertThat(items.get(0).getName()).containsIgnoringCase("test showcase item 1");
+                });
     }
 
     @Test
-    void testMainItems_withSearchParameterPartDescription_shouldReturnFilteredResults() throws Exception {
+    void testMainItems_withSearchParameterPartDescription_shouldReturnFilteredResults() {
         ShowcaseItem item1 = ShowcaseTestDataFactory.createShowcaseItem1();
         ShowcaseItem item2 = ShowcaseTestDataFactory.createShowcaseItem2();
-        showcaseItemRepository.saveAll(List.of(item1, item2));
 
-        MvcResult result = mockMvc.perform(get("/main/items")
-                        .param("search", "item description 1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("main"))
-                .andExpect(model().attributeExists("items"))
-                .andReturn();
+        Flux.just(item1, item2)
+                .flatMap(showcaseItemRepository::save)
+                .then()
+                .block();
 
-        Page<ShowcaseItemDto> items = getPageFromModel(result, "items");
-        assertThat(items).hasSize(1);
-        assertThat(items.getContent().getFirst().getDescription()).containsIgnoringCase("item description 1");
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/main/items")
+                        .queryParam("search", "item description 1")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(response -> {
+                    List<ShowcaseItemDto> items = HtmlTestUtils.extractItemsFromHtml(response);
+                    assertThat(items).hasSize(1);
+                    assertThat(items.get(0).getDescription()).containsIgnoringCase("item description 1");
+                });
     }
 
     @Test
-    void testShowcaseItem_invalidId_shouldReturn404() throws Exception {
+    void testShowcaseItem_invalidId_shouldReturn404() {
         long nonExistentId = 99999L;
 
-        mockMvc.perform(get("/main/items/" + nonExistentId))
-                .andExpect(status().isNotFound())
-                .andExpect(view().name("error"))
-                .andExpect(model().attribute("error", "Showcase item not found"));
+        webTestClient.get().uri("/main/items/" + nonExistentId)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String html = response.getResponseBody();
+                    assertThat(html).contains("Showcase item not found");
+                });
     }
-}*/
+}
