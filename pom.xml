@@ -30,23 +30,28 @@
 		<java.version>21</java.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
 		<liquibase.version>4.31.1</liquibase.version>
-		<liquibase-hibernate6.version>4.31.1</liquibase-hibernate6.version>
 		<javassist.version>3.24.0-GA</javassist.version>
 		<validation-api.version>3.1.1</validation-api.version>
 		<assertj.version>3.27.3</assertj.version>
+		<reactor-core.version>3.6.0</reactor-core.version>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-data-r2dbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.r2dbc</groupId>
+			<artifactId>r2dbc-h2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.liquibase</groupId>
@@ -69,11 +74,6 @@
 			<version>${org.mapstruct.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.liquibase.ext</groupId>
-			<artifactId>liquibase-hibernate6</artifactId>
-			<version>${liquibase-hibernate6.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
 			<version>${validation-api.version}</version>
@@ -84,6 +84,16 @@
 			<version>${javassist.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+			<version>${reactor-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -92,6 +102,12 @@
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 			<version>3.27.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.17.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -125,22 +141,6 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-maven-plugin</artifactId>
-				<version>${liquibase.version}</version>
-				<configuration>
-					<changeLogFile>${project.basedir}/src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
-					<outputChangeLogFile>dbchangelog.xml</outputChangeLogFile>
-					<diffChangeLogFile>${project.basedir}/src/main/resources/db/changelog/generated_changelog.xml</diffChangeLogFile>
-					<logging>debug</logging>
-					<referenceUrl>hibernate:spring:com.practice.intershop.model?dialect=org.hibernate.dialect.H2Dialect</referenceUrl>
-					<url>jdbc:h2:file:./data/shopDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</url>
-					<username>user</username>
-					<password>user</password>
-					<driver>org.h2.Driver</driver>
 				</configuration>
 			</plugin>
 		</plugins>

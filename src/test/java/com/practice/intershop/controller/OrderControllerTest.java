@@ -1,74 +1,81 @@
 package com.practice.intershop.controller;
 
-import com.practice.intershop.dto.SalesOrderDto;
-import com.practice.intershop.mapper.SalesOrderMapper;
 import com.practice.intershop.model.OrderItem;
 import com.practice.intershop.model.SalesOrder;
-import com.practice.intershop.repository.OrderRepository;
-import com.practice.intershop.repository.ShowcaseItemRepository;
 import com.practice.intershop.utils.OrderTestDataFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import reactor.core.publisher.Flux;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 class OrderControllerTest extends AbstractControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private SalesOrderMapper salesOrderMapper;
-    @Autowired
-    private OrderRepository salesOrderRepository;
-    @Autowired
-    private ShowcaseItemRepository salesShowcaseItemRepository;
-
     @Test
-    void testGetOrderById_shouldReturnOrderPage() throws Exception {
+    void testGetOrderById_shouldReturnOrderPage() {
         SalesOrder order = OrderTestDataFactory.createCompletedOrder1();
         persistShowcaseItems(order);
-        SalesOrder saved = salesOrderRepository.save(order);
-        SalesOrderDto expectedDto = salesOrderMapper.toDto(saved);
 
-        MvcResult result = mockMvc.perform(get("/orders/" + saved.getId()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("order"))
-                .andExpect(model().attributeExists("salesOrder"))
-                .andReturn();
+        SalesOrder savedOrder = salesOrderRepository.save(order).block();
+        persistOrderItems(savedOrder);
 
-        SalesOrderDto actualDto = getObjectFromModel(result, "salesOrder");
+        webTestClient.get()
+                .uri("/orders/" + savedOrder.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .value(body -> {
+                    assertThat(body).contains("Заказ № " + savedOrder.getId());
+                    savedOrder.getOrderItems().forEach(item -> {
+                        assertThat(body).contains(item.getShowcaseItem().getName());
+                        assertThat(body).contains(item.getQuantity() + " шт.");
 
-        assertThat(actualDto).isEqualTo(expectedDto);
+                        BigDecimal total = item.getUnitPrice()
+                                .multiply(BigDecimal.valueOf(item.getQuantity()))
+                                .setScale(2, RoundingMode.HALF_UP);
+
+                        assertThat(body).contains(total.toPlainString() + " руб.");
+                    });
+                });
     }
 
     @Test
-    void testGetAllCompletedOrders_shouldReturnOrdersPage() throws Exception {
+    void testGetAllCompletedOrders_shouldReturnOrdersPage() {
         SalesOrder order1 = OrderTestDataFactory.createCompletedOrder1();
         SalesOrder order2 = OrderTestDataFactory.createCompletedOrder2();
         persistShowcaseItems(order1, order2);
-        List<SalesOrder> savedOrders = salesOrderRepository.saveAll(List.of(order1, order2));
 
-        List<SalesOrderDto> expectedDtos = savedOrders.stream()
-                .map(salesOrderMapper::toDto)
-                .toList();
+        List<SalesOrder> savedOrders = Flux.just(order1, order2)
+                .flatMap(salesOrderRepository::save)
+                .collectList()
+                .block();
+        persistOrderItems(savedOrders.toArray(new SalesOrder[0]));
 
-        MvcResult mvcResult = mockMvc.perform(get("/orders"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("orders"))
-                .andExpect(model().attributeExists("orders"))
-                .andReturn();
-        List<SalesOrderDto> actualDtos = getListFromModel(mvcResult, "orders");
+        webTestClient.get()
+                .uri("/orders")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .value(body -> {
+                    savedOrders.forEach(order -> {
+                        assertThat(body).contains("Заказ № " + order.getId());
 
-        assertThat(actualDtos)
-                .hasSameSizeAs(expectedDtos)
-                .containsExactlyInAnyOrderElementsOf(expectedDtos);
+                        order.getOrderItems().forEach(item -> {
+                            BigDecimal total = item.getUnitPrice()
+                                    .multiply(BigDecimal.valueOf(item.getQuantity()))
+                                    .setScale(2, RoundingMode.HALF_UP);
+
+                            assertThat(body).contains(item.getShowcaseItem().getName());
+                            assertThat(body).contains(item.getQuantity() + " шт.");
+                            assertThat(body).contains(total.toPlainString() + " руб.");
+                        });
+                    });
+                });
     }
 
     //here should be more tests, but I have no time to write them :(
@@ -78,6 +85,17 @@ class OrderControllerTest extends AbstractControllerTest {
                 .flatMap(so -> so.getOrderItems().stream())
                 .map(OrderItem::getShowcaseItem)
                 .distinct()
-                .forEach(showcaseItem -> salesShowcaseItemRepository.save(showcaseItem));
+                .forEach(showcaseItem -> showcaseItemRepository.save(showcaseItem).block());
+    }
+
+    private void persistOrderItems(SalesOrder... salesOrders) {
+        for (SalesOrder salesOrder : salesOrders) {
+            salesOrder.getOrderItems().forEach(orderItem -> {
+                orderItem.setSalesOrderId(salesOrder.getId());
+                orderItem.setSalesOrder(salesOrder);
+                orderItem.setShowcaseItemId(orderItem.getShowcaseItem().getId());
+                orderItemRepository.save(orderItem).block();
+            });
+        }
     }
 }

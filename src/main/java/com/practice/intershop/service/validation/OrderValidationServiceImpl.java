@@ -3,6 +3,8 @@ package com.practice.intershop.service.validation;
 import com.practice.intershop.model.SalesOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -13,12 +15,9 @@ public class OrderValidationServiceImpl implements OrderValidationService {
     private final List<OrderValidator> orderValidatorList;
 
     @Override
-    public boolean isValid(SalesOrder order) {
-        for (OrderValidator orderValidator : orderValidatorList) {
-            if (!orderValidator.isValid(order)) {
-                throw orderValidator.getException();
-            }
-        }
-        return false;
+    public Mono<Void> isValid(SalesOrder order) {
+        return Flux.fromIterable(orderValidatorList)
+                .concatMap(validator -> validator.validate(order))
+                .then();
     }
 }

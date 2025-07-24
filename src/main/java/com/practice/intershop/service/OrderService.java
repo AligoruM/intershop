@@ -2,18 +2,17 @@ package com.practice.intershop.service;
 
 import com.practice.intershop.enums.UpdateCountAction;
 import com.practice.intershop.model.SalesOrder;
-
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface OrderService {
-    void updateCountForPlannedOrder(Long showcaseItemId, UpdateCountAction action);
+    Mono<Void> updateCountForPlannedOrder(Long showcaseItemId, UpdateCountAction action);
 
-    Optional<SalesOrder> findPlannedSalesOrder();
+    Mono<SalesOrder> findPlannedSalesOrder();
 
-    void performBuyOrder(Long orderId);
+    Mono<Void> performBuyOrder(Long orderId);
 
-    SalesOrder findSalesOrder(Long orderId);
+    Mono<SalesOrder> findSalesOrder(Long orderId);
 
-    List<SalesOrder> findAllCompletedOrders();
+    Flux<SalesOrder> findAllCompletedOrders();
 }

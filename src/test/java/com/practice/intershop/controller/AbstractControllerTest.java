@@ -1,30 +1,33 @@
 package com.practice.intershop.controller;
 
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import com.practice.intershop.repository.OrderItemR2dbcRepository;
+import com.practice.intershop.repository.OrderR2dbcRepository;
+import com.practice.intershop.repository.ShowcaseItemR2dbcRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @ActiveProfiles("test")
-@Transactional
-@SuppressWarnings("unchecked")
 public abstract class AbstractControllerTest {
 
-    protected <T> Page<T> getPageFromModel(MvcResult result, String attributeName) {
-        return (Page<T>) result.getModelAndView().getModel().get(attributeName);
-    }
+    @Autowired
+    protected WebTestClient webTestClient;
+    @Autowired
+    protected OrderR2dbcRepository salesOrderRepository;
+    @Autowired
+    protected ShowcaseItemR2dbcRepository showcaseItemRepository;
+    @Autowired
+    protected OrderItemR2dbcRepository orderItemRepository;
 
-    protected <T> List<T> getListFromModel(MvcResult result, String attributeName) {
-        return (List<T>) result.getModelAndView().getModel().get(attributeName);
-    }
-
-    protected <T> T getObjectFromModel(MvcResult result, String attributeName) {
-        return (T) result.getModelAndView().getModel().get(attributeName);
+    @BeforeEach
+    void setUp() {
+        orderItemRepository.deleteAll().block();
+        salesOrderRepository.deleteAll().block();
+        showcaseItemRepository.deleteAll().block();
     }
 }
