@@ -1,6 +1,6 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
+intershop-service/HELP.md
+**/target/
+../.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -32,4 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-data/
+/intershop-service/data/
