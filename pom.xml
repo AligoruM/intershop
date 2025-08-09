@@ -22,7 +22,7 @@
     <javassist.version>3.24.0-GA</javassist.version>
     <validation-api.version>3.1.1</validation-api.version>
     <assertj.version>3.27.3</assertj.version>
-    <reactor-core.version>3.6.0</reactor-core.version>
+    <reactor-core.version>3.7.7</reactor-core.version>
     <openapi-generator.version>7.14.0</openapi-generator.version>
     <swagger-annotaions.version>2.2.14</swagger-annotaions.version>
     <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>

@@ -13,9 +13,9 @@ import com.practice.intershop.repository.OrderR2dbcRepository;
 import com.practice.intershop.repository.ShowcaseItemR2dbcRepository;
 import com.practice.intershop.service.validation.OrderValidationService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -35,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentService paymentService;
 
     @Override
+    @CacheEvict(value = "showCaseItem", key = "#p0")
     public Mono<Void> updateCountForPlannedOrder(Long showcaseItemId, UpdateCountAction action) {
         return findPlannedSalesOrder()
                 .switchIfEmpty(Mono.defer(() -> {
