@@ -5,6 +5,7 @@ import com.practice.intershop.enums.OrderStatus;
 import com.practice.intershop.enums.UpdateCountAction;
 import com.practice.intershop.exception.IntershopCustomException;
 import com.practice.intershop.exception.NotFoundException;
+import com.practice.intershop.exception.PaymentFailedException;
 import com.practice.intershop.model.OrderItem;
 import com.practice.intershop.model.SalesOrder;
 import com.practice.intershop.repository.OrderItemR2dbcRepository;
@@ -12,6 +13,8 @@ import com.practice.intershop.repository.OrderR2dbcRepository;
 import com.practice.intershop.repository.ShowcaseItemR2dbcRepository;
 import com.practice.intershop.service.validation.OrderValidationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -20,6 +23,7 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -28,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemR2dbcRepository orderItemRepository;
     private final ShowcaseItemR2dbcRepository showcaseItemRepository;
     private final OrderValidationService validationService;
+    private final PaymentService paymentService;
 
     @Override
     public Mono<Void> updateCountForPlannedOrder(Long showcaseItemId, UpdateCountAction action) {
@@ -92,17 +97,34 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Mono<Void> performBuyOrder(Long orderId) {
         return findSalesOrder(orderId)
-                .flatMap(salesOrder -> validationService.isValid(salesOrder)
-                        .then(Mono.defer(() -> {
-                            salesOrder.setOrderStatus(OrderStatus.COMPLETED);
-                            return orderRepository.save(salesOrder);
-                        }))
-                        .thenMany(orderItemRepository.findAllBySalesOrderId(orderId))
-                        .flatMap(orderItem -> {
-                            orderItem.setStatus(OrderItemStatus.COMPLETED);
-                            return orderItemRepository.save(orderItem);
-                        }).then()
-                ).then();
+                .flatMap(salesOrder ->
+                        validationService.isValid(salesOrder)
+                                .then(paymentService.performPayment(salesOrder))
+                                .flatMap(paymentResponse -> {
+                                    if (Boolean.FALSE.equals(paymentResponse.getSuccess())) {
+                                        return Mono.error(new PaymentFailedException("Payment rejected"));
+                                    }
+                                    log.debug("For order {} payment successful {}", orderId, paymentResponse);
+                                    return processSuccessfulPayment(salesOrder);
+                                })
+                )
+                .onErrorResume(PaymentFailedException.class, e -> {
+                    log.error("Order {} payment failed: {}", orderId, e.getMessage());
+                    return Mono.error(e);
+                });
+    }
+
+    private Mono<Void> processSuccessfulPayment(SalesOrder salesOrder) {
+        return Mono.defer(() -> {
+                    salesOrder.setOrderStatus(OrderStatus.COMPLETED);
+                    return orderRepository.save(salesOrder);
+                })
+                .thenMany(orderItemRepository.findAllBySalesOrderId(salesOrder.getId()))
+                .flatMap(orderItem -> {
+                    orderItem.setStatus(OrderItemStatus.COMPLETED);
+                    return orderItemRepository.save(orderItem);
+                })
+                .then();
     }
 
     @Override

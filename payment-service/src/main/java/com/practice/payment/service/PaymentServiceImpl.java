@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class PaymentServiceImpl implements PaymentService {
     @Override
     public Mono<Boolean> performPayment(Long userId, BigDecimal amount) {
-        return Mono.just(false);
+        return Mono.just(true);
     }
 
     @Override

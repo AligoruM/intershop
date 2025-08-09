@@ -3,28 +3,31 @@ package com.practice.intershop.config;
 import com.practice.intershop.api.ApiClient;
 import com.practice.intershop.api.client.BalanceApi;
 import com.practice.intershop.api.client.PaymentApi;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ApiClientConfig {
 
+    @Value("${payment.service.base-url:http://payment-service:8081}")
+    private String paymentServiceBaseUrl;
+
     @Bean
-    public ApiClient paymentApiClient(WebClient.Builder webClientBuilder) {
-        return new ApiClient(webClientBuilder
-                .baseUrl("http://payment-service:8081")
-                .defaultHeader("Accept", "application/json")
-                .build());
+    public ApiClient paymentApiClient() {
+        return new ApiClient()
+                .setBasePath(paymentServiceBaseUrl)
+                .addDefaultHeader("Accept", "application/json");
     }
 
     @Bean
-    public PaymentApi paymentApi(ApiClient paymentApiClient) {
+    public PaymentApi paymentApi(@Qualifier("paymentApiClient") ApiClient paymentApiClient) {
         return new PaymentApi(paymentApiClient);
     }
 
     @Bean
-    public BalanceApi balanceApi(ApiClient paymentApiClient) {
+    public BalanceApi balanceApi(@Qualifier("paymentApiClient") ApiClient paymentApiClient) {
         return new BalanceApi(paymentApiClient);
     }
 }
