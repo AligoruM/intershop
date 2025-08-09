@@ -10,16 +10,22 @@
   <modules>
     <module>intershop-service</module>
     <module>payment-service</module>
+    <module>payment-api</module>
   </modules>
 
   <properties>
     <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <org.mapstruct.version>1.6.3</org.mapstruct.version>
     <liquibase.version>4.31.1</liquibase.version>
     <javassist.version>3.24.0-GA</javassist.version>
     <validation-api.version>3.1.1</validation-api.version>
     <assertj.version>3.27.3</assertj.version>
     <reactor-core.version>3.6.0</reactor-core.version>
+    <openapi-generator.version>7.14.0</openapi-generator.version>
+    <swagger-annotaions.version>2.2.14</swagger-annotaions.version>
+    <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
   </properties>
 
   <dependencyManagement>
@@ -42,6 +48,57 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.r2dbc</groupId>
+      <artifactId>r2dbc-h2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-core</artifactId>
+      <version>${reactor-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${org.mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>${validation-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>${javassist.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

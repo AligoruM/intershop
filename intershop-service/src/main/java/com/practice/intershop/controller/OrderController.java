@@ -33,7 +33,7 @@ public class OrderController {
     }
 
     @GetMapping("/orders/{id}")
-    public Mono<Rendering> order(@PathVariable Long id) {
+    public Mono<Rendering> order(@PathVariable("id") Long id) {
         return orderService.findSalesOrder(id)
                 .map(salesOrderMapper::toDto)
                 .map(order -> Rendering.view("order")
@@ -42,7 +42,7 @@ public class OrderController {
     }
 
     @PostMapping({"/main/items/{showcaseItemId}", "/items/{showcaseItemId}"})
-    public Mono<Rendering> updateItem(@PathVariable Long showcaseItemId,
+    public Mono<Rendering> updateItem(@PathVariable("showcaseItemId") Long showcaseItemId,
                                       ServerWebExchange webExchange) {
         return webExchange.getFormData().flatMap(formData -> {
             String action = formData.getFirst("action");
@@ -63,7 +63,7 @@ public class OrderController {
     }
 
     @PostMapping("/cart/buy/{orderId}")
-    public Mono<Rendering> buy(@PathVariable Long orderId) {
+    public Mono<Rendering> buy(@PathVariable("orderId") Long orderId) {
         return orderService.performBuyOrder(orderId)
                 .thenReturn(Rendering.redirectTo("/orders/" + orderId)
                         .modelAttribute("newOrder", true)
@@ -71,7 +71,7 @@ public class OrderController {
     }
 
     @PostMapping("/cart/items/{showcaseItemId}")
-    public Mono<Rendering> updateCountFromCart(@PathVariable Long showcaseItemId,
+    public Mono<Rendering> updateCountFromCart(@PathVariable("showcaseItemId") Long showcaseItemId,
                                                ServerWebExchange webExchange) {
         return webExchange.getFormData()
                 .flatMap(formData -> {

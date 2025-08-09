@@ -11,80 +11,16 @@
 	<artifactId>intershop-service</artifactId>
 	<version>1.0</version>
 	<name>intershop-service</name>
-	<description>Project for practice</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>io.r2dbc</groupId>
-			<artifactId>r2dbc-h2</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 			<version>${liquibase.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<version>${org.mapstruct.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.validation</groupId>
-			<artifactId>jakarta.validation-api</artifactId>
-			<version>${validation-api.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>${javassist.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-core</artifactId>
-			<version>${reactor-core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>3.27.3</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -124,6 +60,13 @@
 						</exclude>
 					</excludes>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

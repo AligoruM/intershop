@@ -2,8 +2,8 @@ FROM amazoncorretto:21
 
 WORKDIR /intershop
 
-COPY target/intershop-1.0.jar intershop.jar
+COPY target/intershop-service-1.0.jar intershop-service.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "intershop.jar"]
+ENTRYPOINT ["java", "-jar", "intershop-service.jar"]

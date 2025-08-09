@@ -43,7 +43,7 @@ public class ShowcaseController {
     }
 
     @GetMapping({"/items/{id}", "/main/items/{id}"})
-    public Mono<Rendering> showcaseItem(@PathVariable Long id) {
+    public Mono<Rendering> showcaseItem(@PathVariable("id") Long id) {
         return showcaseService.getShowcaseItem(id)
                 .map(item -> Rendering.view("item")
                         .modelAttribute("item", showcaseItemMapper.toDto(item)).build());

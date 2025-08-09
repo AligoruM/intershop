@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: Payment Service API
+  version: 1.0.0
+  description: API для получения баланса и оплаты заказа
+
+paths:
+  /balance/{userId}:
+    get:
+      summary: Получить баланс пользователя
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Баланс получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        '404':
+          description: Пользователь не найден
+
+  /payment:
+    post:
+      summary: Провести оплату заказа
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '200':
+          description: Оплата прошла успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Недостаточно средств
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    BalanceResponse:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        balance:
+          $ref: '#/components/schemas/BigDecimal'
+
+    PaymentRequest:
+      type: object
+      required:
+        - userId
+        - amount
+      properties:
+        userId:
+          type: integer
+          format: int64
+        amount:
+          $ref: '#/components/schemas/BigDecimal'
+
+    PaymentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        newBalance:
+          $ref: '#/components/schemas/BigDecimal'
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Недостаточно средств на балансе
+
+    BigDecimal:
+      type: string
+      pattern: '^-?\d+(\.\d+)?$'
+      description: A string-represented decimal number to avoid floating-point precision issues
+      example: "1234.567890123456789"

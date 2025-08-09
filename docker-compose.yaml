@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  intershop-service:
+    build: ./intershop-service
+    ports:
+      - "8080:8080"
+    networks:
+      - intershop-network
+
+  payment-service:
+    build: ./payment-service
+    ports:
+      - "8081:8081"
+    networks:
+      - intershop-network
+
+networks:
+  intershop-network:
+    driver: bridge
