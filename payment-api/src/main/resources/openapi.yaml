@@ -7,6 +7,8 @@ info:
 paths:
   /balance/{userId}:
     get:
+      tags:
+        - Balance
       summary: Получить баланс пользователя
       parameters:
         - name: userId
@@ -27,6 +29,8 @@ paths:
 
   /payment:
     post:
+      tags:
+        - Payment
       summary: Провести оплату заказа
       requestBody:
         required: true
