@@ -1,6 +1,8 @@
 package com.practice.intershop.service;
 
+import com.practice.intershop.api.client.BalanceApi;
 import com.practice.intershop.api.client.PaymentApi;
+import com.practice.intershop.api.model.BalanceResponse;
 import com.practice.intershop.api.model.ErrorResponse;
 import com.practice.intershop.api.model.PaymentRequest;
 import com.practice.intershop.api.model.PaymentResponse;
@@ -21,6 +23,7 @@ import java.math.RoundingMode;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentApi paymentApi;
+    private final BalanceApi balanceApi;
 
     @Override
     public Mono<PaymentResponse> performPayment(SalesOrder order) {
@@ -40,5 +43,10 @@ public class PaymentServiceImpl implements PaymentService {
                 })
                 .onErrorResume(Exception.class,
                         ex -> Mono.error(new PaymentFailedException("Unexpected error during payment: " + ex.getMessage())));
+    }
+
+    @Override
+    public Mono<BalanceResponse> getBalance(Long userId) {
+        return balanceApi.balanceUserIdGet(userId);
     }
 }

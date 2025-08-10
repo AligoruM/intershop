@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,6 +140,14 @@ public class OrderServiceImpl implements OrderService {
     public Flux<SalesOrder> findAllCompletedOrders() {
         return orderRepository.findAllByOrderStatus(OrderStatus.COMPLETED)
                 .flatMap(this::enrichOrderWithItems);
+    }
+
+    @Override
+    public Mono<BigDecimal> getBalance(Long userId) {
+        return paymentService.getBalance(userId)
+                .map(balance -> balance.getBalance() == null
+                        ? BigDecimal.ZERO
+                        : new BigDecimal(balance.getBalance()));
     }
 
     @Override

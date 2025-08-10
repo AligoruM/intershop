@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.reactive.result.view.Rendering;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -55,10 +58,21 @@ public class OrderController {
     @GetMapping("/cart/items")
     public Mono<Rendering> cartItems() {
         return orderService.findPlannedSalesOrder()
-                .map(salesOrderMapper::toDto)
-                .defaultIfEmpty(new SalesOrderDto(-1L, List.of()))
-                .map(cart -> Rendering.view("cart")
-                        .modelAttribute("cart", cart)
+                .flatMap(salesOrder -> {
+                    Mono<Tuple2<BigDecimal, Boolean>> balanceInfo = orderService.getBalance(1L)
+                            .map(balance -> Tuples.of(balance, false))
+                            .onErrorReturn(Tuples.of(BigDecimal.ZERO, true));
+
+                    return balanceInfo.map(info -> Rendering.view("cart")
+                            .modelAttribute("cart", salesOrderMapper.toDto(salesOrder))
+                            .modelAttribute("balanceInfo", info.getT2() ? "Оплата недоступна" : info.getT1())
+                            .modelAttribute("disabled", info.getT2())
+                            .build());
+                })
+                .defaultIfEmpty(Rendering.view("cart")
+                        .modelAttribute("cart", new SalesOrderDto(-1L, List.of()))
+                        .modelAttribute("balanceInfo", "Нет активного заказа")
+                        .modelAttribute("disabled", true)
                         .build());
     }
 
