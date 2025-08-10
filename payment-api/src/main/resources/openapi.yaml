@@ -51,6 +51,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Пользователь не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -88,7 +94,7 @@ components:
       properties:
         error:
           type: string
-          example: Недостаточно средств на балансе
+          example: Сообщение ошибки
 
     BigDecimal:
       type: string

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.19.xsd">
+
+    <changeSet id="testdata-1" author="gento" context="dev">
+        <insert tableName="user_balance">
+            <column name="user_id" value="1"/>
+            <column name="balance" value="1500.50"/>
+        </insert>
+        <insert tableName="user_balance">
+            <column name="user_id" value="2"/>
+            <column name="balance" value="2750.00"/>
+        </insert>
+        <insert tableName="user_balance">
+            <column name="user_id" value="3"/>
+            <column name="balance" value="500.75"/>
+        </insert>
+        <insert tableName="user_balance">
+            <column name="user_id" value="4"/>
+            <column name="balance" value="3200.25"/>
+        </insert>
+        <insert tableName="user_balance">
+            <column name="user_id" value="5"/>
+            <column name="balance" value="100.00"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
