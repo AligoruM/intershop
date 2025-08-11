@@ -8,7 +8,6 @@ import com.practice.dto.ErrorResponse;
 import com.practice.dto.PaymentRequest;
 import com.practice.dto.PaymentResponse;
 import com.practice.payment.service.PaymentService;
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,8 +52,8 @@ public class PaymentController implements PaymentApi, BalanceApi {
                 });
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public Mono<ResponseEntity<ErrorResponse>> handleNotFound(NotFoundException ex) {
+    @ExceptionHandler(NoSuchElementException.class)
+    public Mono<ResponseEntity<ErrorResponse>> handleNotFound(NoSuchElementException ex) {
         return Mono.just(
                 ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ErrorResponse().error(ex.getMessage()))

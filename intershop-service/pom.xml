@@ -12,6 +12,13 @@
 	<version>3.0-SNAPSHOT</version>
 	<name>intershop-service</name>
 
+	<properties>
+		<org.testcontainers.versions>1.21.3</org.testcontainers.versions>
+		<org.testcontainers.junit-jupiter.version>1.19.7</org.testcontainers.junit-jupiter.version>
+		<com.redis.testcontainers-redis.version>2.2.2</com.redis.testcontainers-redis.version>
+		<org.jsoup.version>1.17.2</org.jsoup.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -22,41 +29,32 @@
 			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-annotations</artifactId>
-			<version>${swagger-annotaions.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openapitools</groupId>
-			<artifactId>jackson-databind-nullable</artifactId>
-			<version>${jackson-databind-nullable.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.annotation</groupId>
-			<artifactId>jakarta.annotation-api</artifactId>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${org.mapstruct.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.17.2</version>
+			<version>${org.jsoup.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>1.19.7</version>
+			<version>${org.testcontainers.junit-jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>testcontainers</artifactId>
-			<version>1.21.3</version>
+			<version>${org.testcontainers.versions}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.redis</groupId>
 			<artifactId>testcontainers-redis</artifactId>
-			<version>2.2.2</version>
+			<version>${com.redis.testcontainers-redis.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

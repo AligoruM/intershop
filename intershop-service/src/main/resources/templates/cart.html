@@ -128,12 +128,13 @@
 <div class="total-sum" th:if="${!cart.orderItems.isEmpty()}" th:text="'Итого: ' + ${cart.totalSum} + ' руб.'"></div>
 
 <div class="buy-button-container" th:if="${!cart.orderItems.isEmpty()}">
-    <div th:if="${balanceInfo != null && balanceInfo < cart.totalSum}">
+    <div th:if="${!disabled && balanceInfo < cart.totalSum}">
         Недостаточно средств (Баланс: <span th:text="${balanceInfo}"></span>)
     </div>
     <form th:unless="${disabled || balanceInfo < cart.totalSum}" method="post" th:action="@{'/cart/buy/' + ${cart.id}}">
         <button>Купить (Баланс: <span th:text="${balanceInfo}"></span>)</button>
     </form>
+    <button th:if="${disabled}"><span th:text="${errorMessage}"></span></button>
 </div>
 
 <div style="text-align:center; font-weight:bold; margin-top:40px;" th:if="${cart.orderItems.isEmpty()}">

@@ -65,13 +65,14 @@ public class OrderController {
 
                     return balanceInfo.map(info -> Rendering.view("cart")
                             .modelAttribute("cart", salesOrderMapper.toDto(salesOrder))
-                            .modelAttribute("balanceInfo", info.getT2() ? "Оплата недоступна" : info.getT1())
+                            .modelAttribute("balanceInfo", info.getT1())
+                            .modelAttribute("errorMessage", info.getT2() ? "Оплата недоступна" : "")
                             .modelAttribute("disabled", info.getT2())
                             .build());
                 })
                 .defaultIfEmpty(Rendering.view("cart")
                         .modelAttribute("cart", new SalesOrderDto(-1L, List.of()))
-                        .modelAttribute("balanceInfo", "Нет активного заказа")
+                        .modelAttribute("balanceInfo", BigDecimal.ZERO)
                         .modelAttribute("disabled", true)
                         .build());
     }

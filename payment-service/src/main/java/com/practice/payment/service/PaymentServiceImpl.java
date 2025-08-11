@@ -2,12 +2,12 @@ package com.practice.payment.service;
 
 import com.practice.payment.model.UserBalance;
 import com.practice.payment.repository.UserBalanceR2dbcRepository;
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +39,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Mono<UserBalance> getUserBalance(Long userId) {
         return userBalanceRepository.findUserBalanceByUserId(userId)
-                .switchIfEmpty(Mono.error(new NotFoundException("User not found")));
+                .switchIfEmpty(Mono.error(new NoSuchElementException("User not found")));
     }
 }
